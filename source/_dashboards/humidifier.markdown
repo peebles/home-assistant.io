@@ -3,6 +3,13 @@ type: card
 title: "Humidifier card"
 sidebar_label: Humidifier
 description: "The humidifier card gives control of your humidifier entity, allowing you to change the target humidity and mode of the entity."
+related:
+  - docs: /integrations/frontend/
+    title: Themes
+  - docs: /dashboards/cards/
+    title: Dashboard cards
+  - docs: /dashboards/naming/
+    title: Card naming
 ---
 
 The humidifier card lets you control and monitor humidifiers, dehumidifiers, and hygrostat devices.
@@ -12,9 +19,9 @@ The humidifier card lets you control and monitor humidifiers, dehumidifiers, and
   Screenshot of the humidifier card.
 </p>
 
-{% include dashboard/edit_dashboard.md %}
-
 All options for this card can be configured via the user interface.
+
+{% include dashboard/edit_dashboard.md %}
 
 ## YAML configuration
 
@@ -31,8 +38,8 @@ entity:
   type: string
 name:
   required: false
-  description: Name of entity.
-  type: string
+  description: Overwrites friendly name. Can be a string, or a name configuration object. See [naming documentation](/dashboards/naming/).
+  type: [string, map, list]
   default: Entity name
 theme:
   required: false
@@ -56,3 +63,4 @@ type: humidifier
 entity: humidifier.bedroom
 name: Bedroom Humidifier
 ```
+

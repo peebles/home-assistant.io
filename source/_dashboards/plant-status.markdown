@@ -3,6 +3,13 @@ type: card
 title: "Plant status card"
 sidebar_label: Plant status
 description: "The plant status card is for all the lovely botanists out there."
+related:
+  - docs: /integrations/frontend/
+    title: Themes
+  - docs: /dashboards/cards/
+    title: Dashboard cards
+  - docs: /dashboards/naming/
+    title: Card naming
 ---
 
 The plant status card is for all the lovely botanists out there.
@@ -12,9 +19,9 @@ The plant status card is for all the lovely botanists out there.
 Screenshot of the plant status card.
 </p>
 
-{% include dashboard/edit_dashboard.md %}
-
 All options for this card can be configured via the user interface.
+
+{% include dashboard/edit_dashboard.md %}
 
 ## YAML configuration
 
@@ -27,12 +34,12 @@ type:
   type: string
 entity:
   required: true
-  description: Entity ID of `plant` domain.
+  description: Entity ID of `plant` domain. For more information, see the [`plant` integration](/integrations/plant).
   type: string
 name:
   required: false
-  description: Overwrites friendly name.
-  type: string
+  description: Overwrites friendly name. Can be a string, or a name configuration object. See [naming documentation](/dashboards/naming/).
+  type: [string, map, list]
   default: Entity name
 theme:
   required: false

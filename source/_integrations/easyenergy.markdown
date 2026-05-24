@@ -13,11 +13,10 @@ ha_domain: easyenergy
 ha_platforms:
   - diagnostics
   - sensor
-ha_quality_scale: platinum
-ha_integration_type: integration
+ha_integration_type: service
 ---
 
-The easyEnergy integration integrates the [easyEnergy](https://www.easyenergy.com) API platform with Home Assistant.
+The **easyEnergy** {% term integration %} integrates the [easyEnergy](https://www.easyenergy.com) API platform with Home Assistant.
 
 The integration makes it possible to retrieve the dynamic energy/gas prices
 from easyEnergy in order to gain insight into the price trend of the day and
@@ -28,6 +27,55 @@ Companies that use the data from easyEnergy:
 - [NieuweStroom](https://nieuwestroom.nl)
 
 {% include integrations/config_flow.md %}
+
+## Use cases
+
+With the [energy dashboard](/energy) you can use the `current hour` price entity to calculate how much the electricity or gas has cost each hour based on the prices from easyEnergy. Or use one of the actions in combination with a [template sensor](#prices-sensor-with-response-data) to show the prices for the next 24 hours in a chart on your dashboard.
+
+## Examples
+
+### Send a notification when the energy price is low
+
+Use the current hour price sensor to send a notification when the energy price drops below your chosen threshold. In this example, the threshold is `0.15 €/kWh`.
+
+```yaml
+automation:
+  - alias: "Notify when the energy price is low"
+    triggers:
+      - trigger: numeric_state
+        entity_id: sensor.easyenergy_today_energy_usage_current_hour_price
+        below: 0.15
+    actions:
+      - action: notify.mobile_app_phone
+        data:
+          title: "Low energy price"
+          message: "The current energy price is {{ trigger.to_state.state }} €/kWh."
+```
+
+### Start a dishwasher when the energy price is low
+
+Use the current hour price sensor to start a dishwasher when the energy price drops below your chosen threshold. In this example, the threshold is `0.15 €/kWh`.
+
+```yaml
+automation:
+  - alias: "Start dishwasher when energy price is low"
+    triggers:
+      - trigger: numeric_state
+        entity_id: sensor.easyenergy_today_energy_usage_current_hour_price
+        below: 0.15
+    actions:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.dishwasher
+```
+
+## Data updates
+
+The integration will poll the easyEnergy API every 10 minutes to update the data in Home Assistant.
+
+## Known limitations
+
+The prices retrieved via the API are bare prices including VAT, however an energy company also charges other rates such as **energy tax** and **purchase costs**. The integration has no configuration option to add these values, but you could create a [template sensor](#all-in-price-sensor) for this.
 
 ## Sensors
 
@@ -66,20 +114,24 @@ For the dynamic gas prices, only entities are created that display the
 `current` and `next hour` price because the price is always fixed for
 24 hours; new prices are published every morning at **05:00 UTC time**.
 
-## Services
+## Actions
 
-The energy and gas prices are exposed using [service calls](/docs/scripts/service-calls/). The services populate [response data](/docs/scripts/service-calls#use-templates-to-handle-response-data) with price data.
+The energy and gas prices are exposed using [actions](/docs/scripts/perform-actions/). The actions populate [response data](/docs/scripts/perform-actions#use-templates-to-handle-response-data) with price data.
 
-### Service `easyenergy.get_gas_prices`
+### Action: Get gas prices
 
-Fetches the hourly prices for gas.
+The `easyenergy.get_gas_prices` action allows you to fetch the hourly prices for gas.
 
-| Service data attribute | Optional | Description | Example |
-| ---------------------- | -------- | ----------- | --------|
-| `config_entry` | no | Config entry to use. | 013713c172577bada2874a32dbe44feb
-| `incl_vat` | no | Defines whether the prices include or exclude VAT. Defaults to True | False
-| `start` | yes | Start time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00
-| `end` | yes | End time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00
+| Data attribute | Optional | Description                                          | Example                          |
+| -------------- | -------- | ---------------------------------------------------- | -------------------------------- |
+| `config_entry` | no       | Config entry ID to use.                              | 013713c172577bada2874a32dbe44feb |
+| `incl_vat`     | no       | Defines whether the prices include or exclude VAT.   | False                            |
+| `start`        | yes      | Start time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00              |
+| `end`          | yes      | End time to get prices. Defaults to today 00:00:00   | 2023-01-01 00:00:00              |
+
+{% tip %}
+You can get your `config_entry` by using actions within the [developer tools](/docs/tools/dev-tools/): use one of the easyEnergy actions and view the YAML.
+{% endtip %}
 
 #### Response data
 
@@ -100,16 +152,20 @@ The response data is a dictionary with the gas timestamps and prices as string a
 }
 ```
 
-### Service `easyenergy.get_energy_usage_prices`
+### Action: Get energy usage prices
 
-Fetches the hourly prices for energy that you use (buy).
+The `easyenergy.get_energy_usage_prices` action allows you to fetch the hourly prices for energy that you use (buy).
 
-| Service data attribute | Optional | Description | Example |
-| ---------------------- | -------- | ----------- | --------|
-| `config_entry` | no | Config entry to use. | 013713c172577bada2874a32dbe44feb
-| `incl_vat` | no | Defines whether the prices include or exclude VAT.  Defaults to True | False
-| `start` | yes | Start time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00
-| `end` | yes | End time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00
+| Data attribute | Optional | Description                                          | Example                          |
+| -------------- | -------- | ---------------------------------------------------- | -------------------------------- |
+| `config_entry` | no       | Config entry ID to use.                              | 013713c172577bada2874a32dbe44feb |
+| `incl_vat`     | no       | Defines whether the prices include or exclude VAT.   | False                            |
+| `start`        | yes      | Start time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00              |
+| `end`          | yes      | End time to get prices. Defaults to today 00:00:00   | 2023-01-01 00:00:00              | 
+
+{% tip %}
+You can get your `config_entry` by using actions within the [developer tools](/docs/tools/dev-tools/): use one of the easyEnergy actions and view the YAML.
+{% endtip %}
 
 #### Response data
 
@@ -130,15 +186,19 @@ The response data is a dictionary with the energy timestamps as strings and pric
 }
 ```
 
-### Service `easyenergy.get_energy_return_prices`
+### Action: Get energy return prices
 
-Fetches the hourly prices for energy that you return (sell).
+The `easyenergy.get_energy_return_prices` action allows you to fetch the hourly prices for energy that you return (sell).
 
-| Service data attribute | Optional | Description | Example |
-| ---------------------- | -------- | ----------- | --------|
-| `config_entry` | no | Config entry to use. | 013713c172577bada2874a32dbe44feb
-| `start` | yes | Start time to get prices. Defaults to today 00:00:00 | 2023-01-01 00:00:00
-| `end` | yes | End time to get prices from. Defaults to today 00:00:00 | 2023-01-01 00:00:00
+| Data attribute | Optional | Description                                             | Example                          |
+| -------------- | -------- | ------------------------------------------------------- | -------------------------------- |
+| `config_entry` | no       | Config entry ID to use.                                 | 013713c172577bada2874a32dbe44feb |
+| `start`        | yes      | Start time to get prices. Defaults to today 00:00:00    | 2023-01-01 00:00:00              |
+| `end`          | yes      | End time to get prices from. Defaults to today 00:00:00 | 2023-01-01 00:00:00              |
+
+{% tip %}
+You can get your `config_entry` by using actions within the [developer tools](/docs/tools/dev-tools/): use one of the easyEnergy actions and view the YAML.
+{% endtip %}
 
 #### Response data
 
@@ -159,29 +219,78 @@ The response data is a dictionary with the energy timestamps as strings and pric
 }
 ```
 
-### Add response to template sensor
+## Templates
 
-You can use the response data in a template sensor that is updated every hour:
+Create template sensors to display the prices in a chart or to calculate the all-in hour price.
 
-{% raw %}
+### Prices sensor with response data
+
+To use the response data from the actions, you can create a template sensor that updates every hour.
 
 ```yaml
 template:
-  - trigger:
-      - platform: time_pattern
+  - triggers:
+      - trigger: time_pattern
         seconds: "*"
-    action:
-      - service: easyenergy.get_energy_usage_prices
-        response_variable: response
+    actions:
+      - action: easyenergy.get_energy_usage_prices
+        response_variable: prices
         data:
-          config_entry: "013713c172577bada2874a32dbe44feb"
+          config_entry: 013713c172577bada2874a32dbe44feb
           incl_vat: true
     sensor:
       - name: Energy prices
         device_class: timestamp
         state: "{{ now() }}"
         attributes:
-          prices: "{{ response.prices }}"
+          prices: "{{ prices }}"
 ```
 
-{% endraw %}
+### All-in price sensor
+
+To calculate the all-in hour price, you can create a template sensor that calculates the price based on the current price, energy tax, and purchase costs.
+
+```yaml
+template:
+  - sensor:
+      - name: easyEnergy all-in current price
+        unique_id: allin_current_price
+        icon: mdi:cash
+        unit_of_measurement: "€/kWh"
+        state_class: measurement
+        state: >
+          {% set energy_tax = PUT_HERE_THE_PRICE %}
+          {% set purch_costs = PUT_HERE_THE_PRICE %}
+          {% set current_price = states('sensor.easyenergy_today_energy_usage_current_hour_price') | float(0) %}
+          {{ (current_price + energy_tax + purch_costs) | round(2) }}
+```
+
+## Troubleshooting
+
+{% details "Prices for tomorrow are unavailable" %}
+
+**Symptom:** The next-day price entities are unavailable or do not show tomorrow's prices.
+
+**Description:** The electricity prices for the next day are usually published around **14:00 UTC time**. Gas prices are published every morning around **05:00 UTC time**.
+
+**Resolution:**
+Wait until the prices have been published by easyEnergy and then wait for the next integration update. The integration polls the API every 10 minutes.
+
+{% enddetails %}
+
+{% details "The prices do not match my energy bill" %}
+
+**Symptom:** The price shown by Home Assistant is lower than the price charged by the energy company.
+
+**Description:** The prices retrieved from the easyEnergy API are bare prices including VAT. Energy companies can charge additional costs, such as energy tax and purchase costs.
+
+**Resolution:**
+Create a template sensor that adds these extra costs to the current price. See the [all-in price sensor](#all-in-price-sensor) example.
+
+{% enddetails %}
+
+## Removing the integration
+
+This integration follows standard integration removal steps. If you also use the template sensors, you need to remove them manually.
+
+{% include integrations/remove_device_service.md %}

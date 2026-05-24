@@ -6,7 +6,8 @@ ha_category:
   - Button
   - Fan
   - Number
-  - Sensor
+  - Switch
+  - Time
 ha_release: 2023.7
 ha_iot_class: Local Polling
 ha_config_flow: true
@@ -19,39 +20,41 @@ ha_platforms:
   - fan
   - number
   - sensor
-ha_integration_type: integration
+  - switch
+  - time
+ha_integration_type: device
 ---
 
-The Renson integration pulls in data from the Renson Endura delta device. Most of the sensors that can be monitored from inside the Android/iOS application can be monitored with this integration.
+The **Renson** {% term integration %} pulls in data from the Renson Endura delta device. Most of the sensors that can be monitored from inside the Android/iOS application can be monitored with this integration.
 
 {% include integrations/config_flow.md %}
 
-## Services
+## Actions
 
-### Service `renson.set_timer_level`
+### Action: Set timer level
 
-Set the ventilation timer.
+The `renson.set_timer_level` action sets the ventilation timer.
 
-  | Service data attribute | Required | Description | Example |
+  | Data attribute | Required | Description | Example |
   | ---------------------- | -------- | ----------- | ------- |
   | `timer_level`| yes | Level setting | |
   | `minutes` | yes | Time of the timer (0 will disable the timer) | |
 
-### Service `renson.set_breeze`
+### Action: Set breeze
 
-Set the breeze function of the ventilation system.
+The `renson.set_breeze` action sets the breeze function of the ventilation system.
 
-  | Service data attribute | Required | Description | Example |
+  | Data attribute | Required | Description | Example |
   | ---------------------- | -------- | ----------- | ------- |
   | `breeze_level`| no | Ventilation level when breeze function is activated | |
   | `temperature` | no | Temperature when the breeze function should be activated in °C | |
   | `activate` | yes | Activate or disable the breeze feature | `2020-05-01T17:45:00` |
 
-### Service `renson.set_pollution_settings`
+### Action: Set pollution settings
 
-Set all the pollution settings of the ventilation system.
+The `renson.set_pollution_settings` action sets all the pollution settings of the ventilation system.
 
-  | Service data attribute | Required | Description | Example |
+  | Data attribute | Required | Description | Example |
   | ---------------------- | -------- | ----------- | ------- |
   | `day_pollution_level`| no | Ventilation level when pollution is detected in the day | |
   | `night_pollution_level` | no | Ventilation level when pollution is detected in the night | |

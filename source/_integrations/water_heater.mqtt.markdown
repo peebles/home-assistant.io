@@ -8,11 +8,12 @@ ha_iot_class: Local Polling
 ha_domain: mqtt
 ---
 
-The `mqtt` water heater platform lets you control your MQTT enabled water heater devices.
+The **MQTT water heater** {% term integration %} lets you control your MQTT enabled water heater devices.
 
 ## Configuration
 
-To enable this water heater platform in your installation, first add the following to your `configuration.yaml` file:
+To use an MQTT water heater in your installation, [add an MQTT device as a subentry](/integrations/mqtt/#configuration), or add the following to your {% term "`configuration.yaml`" %} file.
+{% include integrations/restart_ha_after_config_inclusion.md %}
 
 ```yaml
 # Example configuration.yaml entry
@@ -21,6 +22,8 @@ mqtt:
       name: Boiler
       mode_command_topic: "basement/boiler/mode/set"
 ```
+
+Alternatively, a more advanced approach is to set it up via [MQTT discovery](/integrations/mqtt/#mqtt-discovery).
 
 {% configuration %}
 availability:
@@ -43,7 +46,7 @@ availability:
       required: true
       type: string
     value_template:
-      description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract device's availability from the `topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
+      description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract device's availability from the `topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
       required: false
       type: template
 availability_mode:
@@ -52,7 +55,7 @@ availability_mode:
   type: string
   default: latest
 availability_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract device's availability from the `availability_topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract device's availability from the `availability_topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
   required: false
   type: template
 availability_topic:
@@ -65,6 +68,10 @@ current_temperature_template:
   type: template
 current_temperature_topic:
   description: The MQTT topic on which to listen for the current temperature. A `"None"` value received will reset the current temperature. Empty values (`'''`) will be ignored.
+  required: false
+  type: string
+default_entity_id:
+  description: Use `default_entity_id` instead of name for automatic generation of the entity ID. For example, `water_heater.foobar`. When used without a `unique_id`, the entity ID will update during restart or reload if the entity ID is available.  If the entity ID already exists, the entity ID will be created with a number at the end. When used with a `unique_id`, the `default_entity_id` is only used when the entity is added for the first time. When set, this overrides a user-customized entity ID if the entity was deleted and added again.
   required: false
   type: string
 device:
@@ -96,6 +103,10 @@ device:
       description: 'The model of the device.'
       required: false
       type: string
+    model_id:
+      description: The model identifier of the device.
+      required: false
+      type: string
     name:
       description: 'The name of the device.'
       required: false
@@ -117,7 +128,7 @@ device:
       required: false
       type: string
 enabled_by_default:
-  description: Flag which defines if the entity should be enabled when first added.
+  description: Controls whether this entity is enabled by default. When set to `true`, the entity is enabled and usable immediately. Disabled entities are hidden by default until you enable them from the device page.
   required: false
   type: boolean
   default: true
@@ -130,7 +141,14 @@ entity_category:
   description: The [category](https://developers.home-assistant.io/docs/core/entity#generic-properties) of the entity.
   required: false
   type: string
-  default: None
+entity_picture:
+  description: "Picture URL for the entity."
+  required: false
+  type: string
+group:
+  description: A list of unique IDs of the member water heater entities. Set this if the water heater entity represents a water heater group.
+  required: false
+  type: list
 initial:
   description: Set the initial target temperature. The default value depends on the temperature unit, and will be 43.3°C or 110°F.
   required: false
@@ -140,7 +158,7 @@ icon:
   required: false
   type: icon
 json_attributes_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract the JSON dictionary from messages received on the `json_attributes_topic`. Usage example can be found in [MQTT sensor](/integrations/sensor.mqtt/#json-attributes-template-configuration) documentation."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract the JSON dictionary from messages received on the `json_attributes_topic`. Usage example can be found in [MQTT sensor](/integrations/sensor.mqtt/#json-attributes-template-configuration) documentation."
   required: false
   type: template
 json_attributes_topic:
@@ -168,7 +186,7 @@ mode_state_template:
   required: false
   type: template
 mode_state_topic:
-  description: The MQTT topic to subscribe for changes of the water heater operation mode. If this is not set, the operation mode works in optimistic mode (see below).
+  description: The MQTT topic to subscribe for changes of the water heater operation mode. If this is not set, the operation mode works in optimistic mode (see below). A "None" payload resets to an `unknown` state. An empty payload is ignored.
   required: false
   type: string
 modes:
@@ -181,10 +199,6 @@ name:
   required: false
   type: string
   default: MQTT water heater
-object_id:
-  description: Used instead of `name` for automatic generation of `entity_id`
-  required: false
-  type: string
 optimistic:
   description: Flag that defines if the water heater works in optimistic mode
   required: false
@@ -210,12 +224,16 @@ payload_on:
   required: false
   type: string
   default: "ON"
+platform:
+  description: Must be `water_heater`. Only allowed and required in [MQTT auto discovery device messages](/integrations/mqtt/#device-discovery-payload).
+  required: true
+  type: string
 power_command_template:
   description: A template to render the value sent to the `power_command_topic` with. The `value` parameter is the payload set for `payload_on` or `payload_off`.
   required: false
   type: template
 power_command_topic:
-  description: The MQTT topic to publish commands to change the water heater power state. Sends the payload configured with `payload_on` if the water heater is turned on via the `water_heater.turn_on`, or the payload configured with `payload_off` if the water heater is turned off via the `water_heater.turn_off` service. Note that `optimistic` mode is not supported through `water_heater.turn_on` and `water_heater.turn_off` services. When called, these services will send a power command to the device but will not optimistically update the state of the water heater. The water heater device should report its state back via `mode_state_topic`.
+  description: The MQTT topic to publish commands to change the water heater power state. Sends the payload configured with `payload_on` if the water heater is turned on via the `water_heater.turn_on`, or the payload configured with `payload_off` if the water heater is turned off via the `water_heater.turn_off` action. Note that `optimistic` mode is not supported through `water_heater.turn_on` and `water_heater.turn_off` actions. When called, these actions will send a power command to the device but will not optimistically update the state of the water heater. The water heater device should report its state back via `mode_state_topic`.
   required: false
   type: string
 precision:
@@ -254,7 +272,7 @@ temperature_unit:
   required: false
   type: string
 unique_id:
-   description: An ID that uniquely identifies this water heater device. If two water heater devices have the same unique ID, Home Assistant will raise an exception.
+   description: An ID that uniquely identifies this water heater device. If two water heater devices have the same unique ID, Home Assistant will raise an exception. Required when used with device-based discovery.
    required: false
    type: string
 value_template:
@@ -273,8 +291,6 @@ For all `*_state_topic`s, a template can be specified that will be used to rende
 
 Say you receive the operation mode `"off"` via your `mode_state_topic`, but the mode is actually called just `off`, here's what you could do:
 
-{% raw %}
-
 ```yaml
 mqtt:
   - water_heater:
@@ -288,8 +304,6 @@ mqtt:
       mode_state_template: "{{ value_json }}"
 ```
 
-{% endraw %}
-
 This will parse the incoming `"off"` as JSON, resulting in `off`. Obviously, in this case you could also just set `value_template: {% raw %}"{{ value_json }}"{% endraw %}`.
 
 Similarly for `*_command_topic`s, a template can be specified to render the outgoing payloads on these topics.
@@ -297,8 +311,6 @@ Similarly for `*_command_topic`s, a template can be specified to render the outg
 ## Example
 
 A full configuration example looks like the one below.
-
-{% raw %}
 
 ```yaml
 # Full example configuration.yaml entry
@@ -317,5 +329,3 @@ mqtt:
       current_temperature_topic: "basement/boiler/current_temperature"
       precision: 1.0
 ```
-
-{% endraw %}

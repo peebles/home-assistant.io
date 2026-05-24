@@ -8,13 +8,13 @@ ha_iot_class: Configurable
 ha_domain: mqtt
 ---
 
-The `mqtt` device trigger platform uses an MQTT message payload to generate device trigger events.
+The **MQTT Device trigger** {% term integration %} uses an MQTT message payload to generate device trigger events.
 
-An MQTT device trigger is a better option than a [binary sensor](/integrations/binary_sensor.mqtt/) for buttons, remote controls etc.
+An MQTT device trigger is a better option than a [binary sensor](/integrations/binary_sensor.mqtt/) for buttons and remote controls.
 
 ## Configuration
 
-MQTT device triggers are only supported through [MQTT discovery](/integrations/mqtt/#mqtt-discovery), manual setup through `configuration.yaml` is not supported.
+MQTT device triggers are only supported through [MQTT discovery](/integrations/mqtt/#mqtt-discovery), manual setup through {% term "`configuration.yaml`" %} is not supported.
 The discovery topic needs to be: `<discovery_prefix>/device_automation/[<node_id>/]<object_id>/config`. Note that only one trigger may be defined per unique discovery topic. Also note that the combination of `type` and `subtype` should be unique for a device.
 
 {% configuration %}
@@ -26,6 +26,10 @@ payload:
   description: Optional payload to match the payload being sent over the topic.
   required: false
   type: string
+platform:
+  description: Must be `device_automation`. Only allowed and required in [MQTT auto discovery device messages](/integrations/mqtt/#device-discovery-payload).
+  required: true
+  type: string
 qos:
   description: The maximum QoS level to be used when receiving and publishing messages.
   required: false
@@ -36,11 +40,11 @@ topic:
   required: true
   type: string
 type:
-  description: "The type of the trigger, e.g. `button_short_press`. Entries supported by the frontend: `button_short_press`, `button_short_release`, `button_long_press`, `button_long_release`, `button_double_press`, `button_triple_press`, `button_quadruple_press`, `button_quintuple_press`. If set to an unsupported value, will render as `subtype type`, e.g. `button_1 spammed` with `type` set to `spammed` and `subtype` set to `button_1`"
+  description: "The type of the trigger, for example, `button_short_press`. Entries supported by the frontend: `button_short_press`, `button_short_release`, `button_long_press`, `button_long_release`, `button_double_press`, `button_triple_press`, `button_quadruple_press`, `button_quintuple_press`. If set to an unsupported value, will render as `subtype type`, for example, `button_1 spammed` with `type` set to `spammed` and `subtype` set to `button_1`"
   required: true
   type: string
 subtype:
-  description: "The subtype of the trigger, e.g. `button_1`. Entries supported by the frontend: `turn_on`, `turn_off`, `button_1`, `button_2`, `button_3`, `button_4`, `button_5`, `button_6`. If set to an unsupported value, will render as `subtype type`, e.g. `left_button pressed` with `type` set to `button_short_press` and `subtype` set to `left_button`"
+  description: "The subtype of the trigger, for example, `button_1`. Entries supported by the frontend: `turn_on`, `turn_off`, `button_1`, `button_2`, `button_3`, `button_4`, `button_5`, `button_6`. If set to an unsupported value, will render as `subtype type`, for example, `left_button pressed` with `type` set to `button_short_press` and `subtype` set to `left_button`"
   required: true
   type: string
 device:
@@ -68,6 +72,10 @@ device:
       description: The model of the device.
       required: false
       type: string
+    model_id:
+      description: The model identifier of the device.
+      required: false
+      type: string
     name:
       description: The name of the device.
       required: false
@@ -89,7 +97,7 @@ device:
       required: false
       type: string
 value_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract the value."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract the value."
   required: false
   type: template
 {% endconfiguration %}

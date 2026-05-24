@@ -2,7 +2,7 @@
 title: Freebox
 description: Instructions on how to integrate Freebox routers into Home Assistant.
 ha_category:
-  - Alarm Control Panel
+  - Alarm
   - Camera
   - Network
   - Presence detection
@@ -11,7 +11,7 @@ ha_category:
 ha_release: 0.85
 ha_iot_class: Local Polling
 ha_codeowners:
-  - '@hacf-fr'
+  - '@hacf-fr/reviewers'
   - '@Quentame'
 ha_config_flow: true
 ha_domain: freebox
@@ -24,10 +24,10 @@ ha_platforms:
   - sensor
   - switch
 ha_zeroconf: true
-ha_integration_type: integration
+ha_integration_type: device
 ---
 
-The `freebox` integration allows you to observe and control [Freebox router](https://www.free.fr/freebox/).
+The **Freebox** {% term integration %} allows you to observe and control [Freebox router](https://www.free.fr/freebox/).
 
 There is currently support for the following device types within Home Assistant:
 
@@ -45,17 +45,23 @@ You can find out your Freebox host and port by opening this address <http://mafr
 The returned JSON should contain an `api_domain` (`host`) and a `https_port` (`port`).
 Please consult the [API documentation](https://dev.freebox.fr/sdk/os/) for more information.
 
+{% tip %}
+
+The `host` (ex: xxxxxxxx.fbxos.fr) and `port` given by <http://mafreebox.freebox.fr/api_version> refers to your Freebox public IP address and may not work if your Home Assistant server is located inside your local LAN. For local API access, you can alternatively use `host` = *mafreebox.freebox.fr* and `port` = *443*.
+
+{% endtip %}
+
 ### Initial setup
 
-<div class='note warning'>
+{% important %}
 
-  You must have set a password for your Freebox router web administration page. Enable the option "Permettre les nouvelles demandes d'associations" and check that the option "Accès à distance sécurisé à Freebox OS" is active in "Gestion des ports" > "Connexions entrantes".
+You must have set a password for your Freebox router web administration page. Enable the option "Permettre les nouvelles demandes d'associations" and check that the option "Accès à distance sécurisé à Freebox OS" is active in "Gestion des ports" > "Connexions entrantes".
 
-</div>
+{% endimportant %}
 
 The first time Home Assistant will connect to your Freebox, you will need to authorize it by pressing the right arrow on the facade of the Freebox when prompted to do so.
 
-To make the Wi-Fi switch and the reboot service working you will have to add "Modification des réglages de la Freebox" permission to Home Assistant application in "Paramètres de la Freebox" > "Gestion des accès" > "Applications".
+To make the Wi-Fi switch and the reboot action working, you will have to add "Modification des réglages de la Freebox" permission to Home Assistant application in "Paramètres de la Freebox" > "Gestion des accès" > "Applications".
 
 To use cameras from the Freebox Delta, you will have to add "Gestion de l'alarme et maison connectée" permission to Home Assistant application in "Paramètres de la Freebox" > "Gestion des accès" > "Applications".
 
@@ -63,6 +69,7 @@ To use cameras from the Freebox Delta, you will have to add "Gestion de l'alarme
 
 Only the routers with Freebox OS are supported:
 
+- Freebox V9 also known as Freebox Ultra
 - Freebox V8 also known as Freebox Pop
 - Freebox V7 also known as Freebox Delta
 - Freebox V6 also known as Freebox Revolution
@@ -112,11 +119,11 @@ This integration allows you to view and control the Freebox alarm control panel.
 
 
 
-## Service
+## Action
 
-### Service `freebox.reboot`
+### Action: Reboot
 
-This service will reboot your Freebox router. It does not take any parameter. Be aware there is no confirmation.
+The `freebox.reboot` action allows you to reboot your Freebox router. It does not take any parameter. Be aware there is no confirmation.
 
 ## Switch
 

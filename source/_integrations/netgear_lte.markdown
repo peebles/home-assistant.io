@@ -16,10 +16,10 @@ ha_platforms:
   - sensor
 ha_codeowners:
   - '@tkdrob'
-ha_integration_type: integration
+ha_integration_type: device
 ---
 
-The NETGEAR LTE integration for Home Assistant allows you to observe and control [NETGEAR LTE modems](https://www.netgear.com/home/mobile-wifi/lte-modems/).
+The **NETGEAR LTE** {% term integration %} for Home Assistant allows you to observe and control [NETGEAR LTE modems](https://www.netgear.com/home/mobile-wifi/lte-modems/).
 
 There is currently support for the following device types within Home Assistant:
 
@@ -29,17 +29,15 @@ There is currently support for the following device types within Home Assistant:
 
 The integration supports sending notifications with SMS, reporting incoming SMS with events and reporting the modem and connection state in a number of sensors and binary sensors.
 
-<div class='note'>
-
+{% note %}
 Splitting of long SMS messages is not supported so notifications can contain a maximum of 70 characters. Simple messages using the reduced GSM-7 alphabet can contain up to 160 characters. Most emojis are not supported.
-
-</div>
+{% endnote %}
 
 {% include integrations/config_flow.md %}
 
-## Notification Service
+## Notification Actions
 
-The integration will create a `notify` service matching the name of the integration entry. This is the model name of the device by default.
+The integration will create a `notify` actions matching the name of the integration entry. This is the model name of the device by default.
 
 ## Events
 
@@ -54,38 +52,38 @@ Messages arriving in the modem inbox are sent as events of type `netgear_lte_sms
 | `from`               | The sender of the message.
 | `message`            | The SMS message content.
 
-## Services
+## Actions
 
-### Service `netgear_lte.connect_lte`
+### Action: Connect LTE
 
-This service asks the modem to establish its LTE connection, useful if the modem does not autoconnect.
+The `netgear_lte.connect_lte` action asks the modem to establish its LTE connection, useful if the modem does not autoconnect.
 
-| Service data attribute | Optional | Description |
+| Data attribute | Optional | Description |
 | ---------------------- | -------- | ----------- |
 | `host`                 | yes      | The modem that should connect (optional when just one modem is configured).
 
-### Service `netgear_lte.disconnect_lte`
+### Action: Disconnect LTE
 
-This service asks the modem to close its LTE connection.
+The `netgear_lte.disconnect_lte` action asks the modem to close its LTE connection.
 
-| Service data attribute | Optional | Description |
+| Data attribute | Optional | Description |
 | ---------------------- | -------- | ----------- |
 | `host`                 | yes      | The modem that should disconnect (optional when just one modem is configured).
 
-### Service `netgear_lte.delete_sms`
+### Action: Delete SMS
 
-The integration makes a service available to delete messages from the modem inbox. This can be used to clean up after incoming SMS events.
+The `netgear_lte.delete_sms` action deletes messages from the modem inbox. This can be used to clean up after incoming SMS events.
 
-| Service data attribute | Optional | Description |
+| Data attribute | Optional | Description |
 | ---------------------- | -------- | ----------- |
 | `host`                 | yes      | The modem that should have a message deleted (optional when just one modem is configured).
 | `sms_id`               | no       | Integer or list of integers with inbox IDs of messages to delete.
 
-### Service `netgear_lte.set_option`
+### Action: Set option
 
-This service can set modem configuration options (otherwise available in the modem web UI).
+The `netgear_lte.set_option` action sets modem configuration options (otherwise available in the modem web UI).
 
-| Service data attribute | Optional | Description |
+| Data attribute | Optional | Description |
 | ---------------------- | -------- | ----------- |
 | `host`                 | yes      | The modem to set options on (optional when just one modem is configured).
 | `autoconnect`          | yes      | Autoconnect value: `never`/`home`/`always`, with `home` meaning "not roaming".
@@ -95,22 +93,18 @@ This service can set modem configuration options (otherwise available in the mod
 
 The following automation example processes incoming SMS messages with the [Conversation](/integrations/conversation/) integration and then deletes the message from the inbox.
 
-{% raw %}
-
 ```yaml
 automation:
   - alias: "SMS conversation"
-    trigger:
-      - platform: event
+    triggers:
+      - trigger: event
         event_type: netgear_lte_sms
-    action:
-      - service: conversation.process
+    actions:
+      - action: conversation.process
         data:
           text: "{{ trigger.event.data.message }}"
-      - service: netgear_lte.delete_sms
+      - action: netgear_lte.delete_sms
         data:
           host: "{{ trigger.event.data.host }}"
           sms_id: "{{ trigger.event.data.sms_id }}"
 ```
-
-{% endraw %}

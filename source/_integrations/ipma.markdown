@@ -10,12 +10,13 @@ ha_codeowners:
   - '@dgomes'
 ha_domain: ipma
 ha_platforms:
+  - diagnostics
   - sensor
   - weather
-ha_integration_type: integration
+ha_integration_type: service
 ---
 
-The `ipma` weather platform uses the [Instituto Português do Mar e Atmosfera](https://www.ipma.pt/) as a source for current and forecast meteorological data.
+The **IPMA** {% term integration %} uses the [Instituto Português do Mar e Atmosfera](https://www.ipma.pt/) as a source for current and forecast meteorological data.
 
 There is currently support for the following device types within Home Assistant:
 

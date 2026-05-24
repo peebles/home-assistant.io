@@ -1,5 +1,4 @@
 ```yaml
-  version: '3'
   services:
     homeassistant:
       container_name: homeassistant
@@ -11,4 +10,6 @@
       restart: unless-stopped
       privileged: true
       network_mode: host
+      environment:
+        TZ: Europe/Amsterdam
 ```

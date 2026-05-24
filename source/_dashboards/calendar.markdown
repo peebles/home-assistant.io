@@ -3,32 +3,23 @@ type: card
 title: "Calendar card"
 sidebar_label: Calendar
 description: "The calendar card displays your calendar entities in a month, day and list view"
+related:
+  - docs: /integrations/frontend/
+    title: Themes
+  - docs: /dashboards/cards/
+    title: Dashboard cards
 ---
 
-The calendar card displays your [calendar](/integrations/#calendar) entities in a month, day and list view (7 days).
+The calendar card displays your {% term calendar %} {% term entities %} in a month, day, and list view (7 days).
 
 <p class='img'>
-  <img src='/images/dashboards/calendar_card.png' alt='Screenshot of the 
-  calendar card'>
+  <img src='/images/dashboards/calendar_card.png' alt='Screenshot of the calendar card'>
   Screenshot of the calendar card.
 </p>
 
-{% include dashboard/edit_dashboard.md %}
-
 All options for this card can be configured via the user interface.
 
-## Card settings
-
-{% configuration_basic %}
-Title:
-  description: The title displayed at the top of the card.
-Initial View:
-  description: "The view that will show first when the card is loaded onto the page. Options are `Month View`, `Day View`, or `List (7 days)`."
-Entities:
-  description: The calendar entities that will be displayed in the card.
-Theme:
-  description: Name of any loaded theme to be used for this card. For more information about themes, see the [frontend documentation](/integrations/frontend/).
-{% endconfiguration_basic %}
+{% include dashboard/edit_dashboard.md %}
 
 ## YAML configuration
 

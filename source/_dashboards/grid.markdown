@@ -3,6 +3,11 @@ type: card
 title: "Grid card"
 sidebar_label: Grid
 description: "The grid card allows you to show multiple cards in a grid."
+related:
+  - docs: /integrations/frontend/
+    title: Themes
+  - docs: /dashboards/cards/
+    title: Dashboard cards
 ---
 
 The grid card allows you to show multiple cards in a grid. It will first fill the columns, automatically adding new rows as needed.
@@ -12,9 +17,9 @@ The grid card allows you to show multiple cards in a grid. It will first fill th
   Screenshot of the grid card.
 </p>
 
-{% include dashboard/edit_dashboard.md %}
-
 All options for this card can be configured via the user interface.
+
+{% include dashboard/edit_dashboard.md %}
 
 ## YAML configuration
 
@@ -70,7 +75,7 @@ square: false
 cards:
   - type: picture-entity
     entity: group.all_lights
-    image:  /local/house.png
+    image: /local/house.png
   - type: horizontal-stack
     cards:
       - type: picture-entity

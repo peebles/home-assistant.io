@@ -6,11 +6,14 @@ ha_category:
 ha_release: 0.7.4
 ha_iot_class: Configurable
 ha_domain: mqtt
+related:
+  - docs: /docs/configuration/
+    title: Configuration file
 ---
 
-The `mqtt` alarm panel platform enables the possibility to control MQTT capable alarm panels. The Alarm icon will change state after receiving a new state from `state_topic`. If these messages are published with *RETAIN* flag, the MQTT alarm panel will receive an instant state update after subscription and will start with the correct state. Otherwise, the initial state will be `unknown`.
+The **MQTT Alarm control panel** {% term integration %} enables the possibility to control MQTT capable alarm panels. The Alarm icon will change state after receiving a new state from `state_topic`. If these messages are published with *RETAIN* flag, the MQTT alarm panel will receive an instant state update after subscription and will start with the correct state. Otherwise, the initial state will be `unknown`.
 
-The integration will accept the following states from your Alarm Panel (in lower case):
+The {% term integration %} will accept the following states from your Alarm Panel (in lower case):
 
 - `disarmed`
 - `armed_home`
@@ -23,11 +26,12 @@ The integration will accept the following states from your Alarm Panel (in lower
 - `arming`
 - `disarming`
 
-The integration can control your Alarm Panel by publishing to the `command_topic` when a user interacts with the Home Assistant frontend.
+The {% term integration %} can control your Alarm Panel by publishing to the `command_topic` when a user interacts with the Home Assistant frontend.
 
 ## Configuration
 
-To enable this platform, add the following lines to your `configuration.yaml`:
+To use an MQTT alarm control panel in your installation, [add an MQTT device as a subentry](/integrations/mqtt/#configuration), or add the following to your {% term "`configuration.yaml`" %} file.
+{% include integrations/restart_ha_after_config_inclusion.md %}
 
 ```yaml
 # Example configuration.yaml entry
@@ -36,6 +40,8 @@ mqtt:
       state_topic: "home/alarm"
       command_topic: "home/alarm/set"
 ```
+
+Alternatively, a more advanced approach is to set it up via [MQTT discovery](/integrations/mqtt/#mqtt-discovery).
 
 {% configuration %}
 availability:
@@ -58,7 +64,7 @@ availability:
       required: true
       type: string
     value_template:
-      description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract device's availability from the `topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
+      description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract device's availability from the `topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
       required: false
       type: template
 availability_mode:
@@ -67,7 +73,7 @@ availability_mode:
   type: string
   default: latest
 availability_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract device's availability from the `availability_topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract device's availability from the `availability_topic`. To determine the devices's availability result of this template will be compared to `payload_available` and `payload_not_available`."
   required: false
   type: template
 availability_topic:
@@ -94,13 +100,17 @@ code_trigger_required:
   type: boolean
   default: true
 command_template:
-  description: "The [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) used for the command payload. Available variables: `action` and `code`."
+  description: "The [template](/docs/templating/where-to-use/#mqtt) used for the command payload. Available variables: `action` and `code`."
   required: false
   type: template
   default: action
 command_topic:
   description: The MQTT topic to publish commands to change the alarm state.
   required: true
+  type: string
+default_entity_id:
+  description: Use `default_entity_id` instead of name for automatic generation of the entity ID. For example, `alarm_control_panel.foobar`. When used without a `unique_id`, the entity ID will update during restart or reload if the entity ID is available.  If the entity ID already exists, the entity ID will be created with a number at the end. When used with a `unique_id`, the `default_entity_id` is only used when the entity is added for the first time. When set, this overrides a user-customized entity ID if the entity was deleted and added again.
+  required: false
   type: string
 device:
   description: "Information about the device this alarm panel is a part of to tie it into the [device registry](https://developers.home-assistant.io/docs/en/device_registry_index.html). Only works when [`unique_id`](#unique_id) is set. At least one of identifiers or connections must be present to identify the device."
@@ -131,6 +141,10 @@ device:
       description: "The model of the device."
       required: false
       type: string
+    model_id:
+      description: The model identifier of the device.
+      required: false
+      type: string
     name:
       description: "The name of the device."
       required: false
@@ -152,7 +166,7 @@ device:
       required: false
       type: string
 enabled_by_default:
-  description: Flag which defines if the entity should be enabled when first added.
+  description: Controls whether this entity is enabled by default. When set to `true`, the entity is enabled and usable immediately. Disabled entities are hidden by default until you enable them from the device page.
   required: false
   type: boolean
   default: true
@@ -165,13 +179,16 @@ entity_category:
   description: The [category](https://developers.home-assistant.io/docs/core/entity#generic-properties) of the entity.
   required: false
   type: string
-  default: None
+entity_picture:
+  description: "Picture URL for the entity."
+  required: false
+  type: string
 icon:
   description: "[Icon](/docs/configuration/customizing-devices/#icon) for the entity."
   required: false
   type: icon
 json_attributes_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract the JSON dictionary from messages received on the `json_attributes_topic`. Usage example can be found in [MQTT sensor](/integrations/sensor.mqtt/#json-attributes-template-configuration) documentation."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract the JSON dictionary from messages received on the `json_attributes_topic`. Usage example can be found in [MQTT sensor](/integrations/sensor.mqtt/#json-attributes-template-configuration) documentation."
   required: false
   type: template
 json_attributes_topic:
@@ -183,10 +200,6 @@ name:
   required: false
   type: string
   default: MQTT Alarm
-object_id:
-  description: Used instead of `name` for automatic generation of `entity_id`
-  required: false
-  type: string
 payload_arm_away:
   description: The payload to set armed-away mode on your Alarm Panel.
   required: false
@@ -232,6 +245,10 @@ payload_trigger:
   required: false
   type: string
   default: TRIGGER
+platform:
+  description: Must be `alarm_control_panel`. Only allowed and required in [MQTT auto discovery device messages](/integrations/mqtt/#device-discovery-payload).
+  required: true
+  type: string
 qos:
   description: The maximum QoS level to be used when receiving and publishing messages.
   required: false
@@ -243,7 +260,7 @@ retain:
   type: boolean
   default: false
 state_topic:
-  description: The MQTT topic subscribed to receive state updates.
+  description: "The MQTT topic subscribed to receive state updates. A \"None\" payload resets to an `unknown` state. An empty payload is ignored. Valid state payloads are: `armed_away`, `armed_custom_bypass`, `armed_home`, `armed_night`, `armed_vacation`, `arming`, `disarmed`, `disarming` `pending` and `triggered`."
   required: true
   type: string
 supported_features:
@@ -252,11 +269,11 @@ supported_features:
   type: list
   default: ["arm_home", "arm_away", "arm_night", "arm_vacation", "arm_custom_bypass", "trigger"]
 unique_id:
-   description: An ID that uniquely identifies this alarm panel. If two alarm panels have the same unique ID, Home Assistant will raise an exception.
+   description: An ID that uniquely identifies this alarm panel. If two alarm panels have the same unique ID, Home Assistant will raise an exception. Required when used with device-based discovery.
    required: false
    type: string
 value_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) to extract the value."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) to extract the value."
   required: false
   type: template
 {% endconfiguration %}
@@ -269,7 +286,6 @@ In this section you find some real-life examples of how to use this alarm contro
 
 The example below shows a full configuration with an alarm panel that only supports the `arm_home` and `arm_away` features.
 
-{% raw %}
 
 ```yaml
 # Example with partial feature support
@@ -283,13 +299,11 @@ mqtt:
       command_topic: "alarmdecoder/panel/set"
 ```
 
-{% endraw %}
 
 ### Configuration with local code validation
 
 The example below shows a full configuration with local code validation.
 
-{% raw %}
 
 ```yaml
 # Example using text based code with local validation configuration.yaml
@@ -302,13 +316,11 @@ mqtt:
       code: mys3cretc0de
 ```
 
-{% endraw %}
 
 ### Configurations with remote code validation
 
 The example below shows a full configuration with remote code validation and `command_template`.
 
-{% raw %}
 
 ```yaml
 # Example using text code with remote validation configuration.yaml
@@ -336,10 +348,8 @@ mqtt:
         { "action": "{{ action }}", "code": "{{ code }}" }
 ```
 
-{% endraw %}
 
-<div class='note warning'>
-
+{% caution %}
 When your MQTT connection is not secured, this will send your secret code over the network unprotected!
-
-</div>
+{% endcaution %}
+ 

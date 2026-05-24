@@ -9,13 +9,18 @@ ha_domain: garadget
 ha_platforms:
   - cover
 ha_integration_type: integration
+related:
+  - docs: /docs/configuration/
+    title: Configuration file
+ha_quality_scale: legacy
 ---
 
-The `garadget` cover platform lets you control [Garadget](https://www.garadget.com/) garage door futurizers through Home Assistant.
+The **Garadget** {% term integration %} lets you control [Garadget](https://www.garadget.com/) garage door futurizers through Home Assistant.
 
 ## Configuration
 
-To enable Garadget Covers in your installation, add the following to your `configuration.yaml` file:
+To enable Garadget Covers in your installation, add the following to your {% term "`configuration.yaml`" %} file.
+{% include integrations/restart_ha_after_config_inclusion.md %}
 
 ```yaml
 # Example configuration.yaml entry
@@ -70,8 +75,6 @@ covers:
   <img src='/images/integrations/garadget/cover_garadget_details.png' />
 </p>
 
-{% raw %}
-
 ```yaml
 # Related configuration.yaml entry
 cover:
@@ -108,9 +111,7 @@ customize:
     icon: mdi:wifi
 ```
 
-{% endraw %}
-
-Some of the Garadget sensors can create a lot of clutter in the logbook.  Use this section of code in your `configuration.yaml` to exclude those entries.
+Some of the Garadget sensors can create a lot of clutter in the **Activity** section. Use this section of code in your{% term "`configuration.yaml`" %} to exclude those entries.
 
 ```yaml
 logbook:

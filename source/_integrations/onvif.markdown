@@ -7,31 +7,26 @@ ha_release: 0.47
 ha_iot_class: Local Push
 ha_domain: onvif
 ha_codeowners:
-  - '@hunterjm'
+  - '@jterrace'
 ha_config_flow: true
 ha_platforms:
   - binary_sensor
   - button
   - camera
   - diagnostics
-  - event
   - sensor
   - switch
-ha_integration_type: integration
+ha_integration_type: device
 ha_dhcp: true
 ---
 
-The ONVIF camera integration allows you to use an [ONVIF](https://www.onvif.org/) Profile S conformant device in Home Assistant. This requires the [`ffmpeg` integration](/integrations/ffmpeg/) to be already configured.
+The **ONVIF** {% term integration %} allows you to use an [ONVIF](https://www.onvif.org/) Profile S conformant device in Home Assistant. This requires the [`ffmpeg` integration](/integrations/ffmpeg/) to be already configured.
 
 {% include integrations/config_flow.md %}
 
-<div class='note'>
-  It is recommended that you create a user on your device specifically for Home Assistant. For all current functionality, it is enough to create a standard user.
-</div>
-
-<div class='note'>
-If running Home assistant Core in a venv, ensure that libxml2 and libxslt python interfaces are installed via your package manager.
-</div>
+{% tip %}
+It is recommended that you create a user on your device specifically for Home Assistant. For all current functionality, it is enough to create a standard user.
+{% endtip %}
 
 ### Configuration notes
 
@@ -66,6 +61,7 @@ To help with development of this integration, enable `info` level logging for `h
 | Motion alarm | Binary sensor | Motion | Generic motion alarm. |
 | Field detection | Binary sensor | Motion | Polygonal field detection determines if each object in the scene is inside or outside the polygon. |
 | Cell motion detection | Binary sensor | Motion | Cell based motion detection determined by placing a grid over the video source and determining changes. |
+| Human shape detection | Binary sensor | Motion | Detection of human shapes by on-camera recognition algorithm. |
 | Motion region detector | Binary sensor | Motion | Detects any motion against the specified motion region. The rule is configured for an area defined by a polygon. |
 | Detected sound | Binary sensor | Sound | Device detected sound. |
 | Digital input | Binary sensor | None | A digital input was triggered on the device. Amcrest is known to use this as a doorbell button press on the AD410. |
@@ -85,11 +81,11 @@ To help with development of this integration, enable `info` level logging for `h
 
 If you are running into trouble with this sensor, please refer to the [Troubleshooting section](/integrations/ffmpeg/#troubleshooting).
 
-### Service `onvif.ptz`
+### Action `onvif.ptz`
 
 If your ONVIF camera supports <abbr title="pan, tilt, and zoom">PTZ</abbr>, you will be able to pan, tilt or zoom your camera.
 
-| Service data attribute | Description |
+| Data attribute | Description |
 | -----------------------| ----------- |
 | `entity_id` | String or list of strings that point at `entity_id`s of cameras. Use `entity_id: all` to target all. |
 | `tilt` | Tilt direction. Allowed values: `UP`, `DOWN`, `NONE` |
@@ -110,3 +106,17 @@ This integration uses the ONVIF auxiliary command and imaging service to send ce
 | IR lamp  | `ir_lamp` |  Turn infrared lamp on and off via `IrCutFilter` ONVIF imaging setting. |
 | Autofocus  | `autofocus` |  Turn autofocus on and off via `AutoFocusMode` ONVIF imaging setting. |
 | Wiper  | `wiper` |  Turn on the lens wiper on and off via the `Wiper` ONVIF auxiliary command. |
+
+## Troubleshooting
+
+### Symptom: Error message: "No usable cameras were found"
+
+The ONVIF integration shows an error message "No usable cameras were found". 
+
+#### Resolution
+
+Update the camera configuration to output at least one video stream in H.264 format rather than H.265. One option for doing this is to set a secondary stream to H.264 while leaving the primary stream at the default H.265.
+
+#### Cause 
+
+Many newer cameras, particularly those with higher resolutions that benefit from H.265's improved video coding, support H.265 (HEVC) by default, while the ONVIF integration looks for H.264 (AVC) video streams to find cameras.

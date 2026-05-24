@@ -5,6 +5,7 @@ ha_category:
   - Binary sensor
   - Climate
   - Sensor
+  - Switch
   - Water heater
 ha_release: 0.61
 ha_iot_class: Cloud Push
@@ -15,9 +16,11 @@ ha_config_flow: true
 ha_platforms:
   - binary_sensor
   - climate
+  - select
   - sensor
+  - switch
   - water_heater
-ha_integration_type: integration
+ha_integration_type: hub
 ---
 
 The **EcoNet** {% term integration %} is consuming the information provided by a [EcoNet enabled Rheem water heater or thermostat](https://www.rheem.com/econet).
@@ -31,6 +34,7 @@ EcoNet devices may be represented by one or more platforms.
 - [Binary sensor](#binary-sensor)
 - [Climate](#climate)
 - [Sensor](#sensor)
+- [Switch](#switch)
 - [Water heater](#water-heater)
 
 ### Binary sensor
@@ -44,6 +48,10 @@ The EcoNet Climate platform lets you control your EcoNet thermostat. Multi-zone 
 ### Sensor
 
 The EcoNet Sensor platform lets you view sensors associated with your EcoNet thermostat or water heater. For example, alert count or available hot water.
+
+### Switch
+
+The EcoNet Switch platform let's you control the EcoNet thermostat emergency heat.
 
 ### Water heater
 

@@ -1,17 +1,19 @@
 ---
-title: OPNSense
+title: OPNsense
 description: Instructions on how to configure OPNsense integration
 ha_category:
   - Hub
   - Presence detection
 ha_release: 0.105
 ha_codeowners:
-  - '@mtreinish'
+  - '@HarlemSquirrel'
+  - '@Snuffy2'
 ha_domain: opnsense
 ha_iot_class: Local Polling
 ha_platforms:
   - device_tracker
-ha_integration_type: integration
+ha_integration_type: hub
+ha_quality_scale: legacy
 ---
 
 [OPNsense](https://opnsense.org/) is an open source FreeBSD based firewall
@@ -40,6 +42,10 @@ User with API Key requires privileges for Type:
 
 - GUI Name: Diagnostics: ARP Table
 - GUI Name: Diagnostics: Network Insight
+
+{% important %}
+OPNSense versions 25.7 and later require All Pages privilege to be granted to the API user account.
+{% endimportant %}
 
 {% configuration %}
 url:

@@ -3,6 +3,13 @@ type: card
 title: "Media control card"
 sidebar_label: Media control
 description: "The media control card is used to display media player entities on an interface with easy to use controls."
+related:
+  - docs: /integrations/frontend/
+    title: Themes
+  - docs: /dashboards/cards/
+    title: Dashboard cards
+  - docs: /dashboards/naming/
+    title: Card naming
 ---
 
 The media control card is used to display [media player](/integrations/#media-player) entities on an interface with easy to use controls.
@@ -29,8 +36,8 @@ entity:
   type: string
 name:
   required: false
-  description: Overwrites friendly name.
-  type: string
+  description: Overwrites friendly name. Can be a string, or a name configuration object. See [naming documentation](/dashboards/naming/).
+  type: [string, map, list]
   default: Name of entity
 theme:
   required: false

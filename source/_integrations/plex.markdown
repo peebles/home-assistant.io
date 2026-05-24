@@ -19,10 +19,10 @@ ha_platforms:
   - sensor
   - update
 ha_zeroconf: true
-ha_integration_type: integration
+ha_integration_type: service
 ---
 
-The Plex integration allows you to connect Home Assistant to a [Plex Media Server](https://plex.tv). Once configured, actively streaming [Plex Clients](https://www.plex.tv/apps-devices/) show up as [media players](/integrations/media_player/) and report playback status and library sizes via [sensors](/integrations/sensor/) in Home Assistant. Media players will allow you to control media playback and see the current playing item.
+The **Plex Media Server** {% term integration %} allows you to connect Home Assistant to a [Plex Media Server](https://plex.tv). Once configured, actively streaming [Plex Clients](https://www.plex.tv/apps-devices/) show up as [media players](/integrations/media_player/) and report playback status and library sizes via [sensors](/integrations/sensor/) in Home Assistant. Media players will allow you to control media playback and see the current playing item.
 
 Support for playing music directly on linked [Sonos](/integrations/sonos/) speakers is available in the [Sonos playback](#sonos-playback) section.
 
@@ -43,7 +43,7 @@ If your router enforces DNS rebind protection, connections to the local `plex.di
 
 ### Integration options
 
-Several options are provided to adjust the behavior of `media_player` entities. These can be changed at **Plex** -> **Options** on the Integrations page.
+Several options are provided to adjust the behavior of `media_player` entities. These can be changed at **Plex** > **Options** on the Integrations page.
 
 **Use episode art**: Display TV episode art instead of TV show art.
 
@@ -76,69 +76,64 @@ The library sensors show a count of items in each library. Depending on the libr
 In addition to the item count, the last added media item (movie, album, or episode) and a timestamp showing when it was added are also provided with each library sensor.
 
 Example automation to use the `last_added_item` attribute on library sensors to notify when new media has been added:
+
 ```yaml
-alias: Plex - New media added
-trigger:
-  - platform: state
+alias: "Plex - New media added"
+triggers:
+  - trigger: state
     entity_id: sensor.plex_library_movies
     id: movie
-  - platform: state
+  - trigger: state
     entity_id: sensor.plex_library_music
     id: album
-  - platform: state
+  - trigger: state
     entity_id: sensor.plex_library_tv_shows
     id: episode
 
-action:
-  - service: notify.mobile_app_phone
+actions:
+  - action: notify.mobile_app_phone
     data:
       title: "New {{ trigger.id }} added"
       message: "{{ trigger.to_state.attributes.last_added_item }}"
 ```
 
-<div class='note info'>
-  
-The library sensors are disabled by default, but can be enabled via the Plex integration page.
-  
-</div>
+{% important %}
+The library sensors are disabled by default, but can be enabled via the Plex integration page. After the sensors are enabled, you may need to add a new item to your library before the last added media attribute is populated.
+{% endimportant %}
 
 ## Button
 
-A `button.scan_clients` entity is available to discover new controllable Plex clients. This may be necessary in scripts or automations which control a Plex client app, but where the underlying device must be turned on first. This button is preferred over the legacy `plex.scan_for_clients` service.
+A `button.scan_clients` entity is available to discover new controllable Plex clients. This may be necessary in scripts or automations which control a Plex client app, but where the underlying device must be turned on first. This button is preferred over the legacy `plex.scan_for_clients` action.
 
 Example script:
-
-{% raw %}
 
 ```yaml
 play_plex_on_tv:
   sequence:
-    - service: media_player.select_source
+    - action: media_player.select_source
       target:
         entity_id: media_player.smart_tv
       data:
         source: "Plex"
     - wait_for_trigger:
-        - platform: state
+        - trigger: state
           entity_id: media_player.smart_tv
           to: "on"
       timeout:
         seconds: 10
-    - service: button.press
+    - action: button.press
       target:
         entity_id: button.scan_clients_plex
     - wait_template: "{{ not is_state('media_player.plex_smart_tv', 'unavailable') }}"
       timeout: "00:00:10"
       continue_on_timeout: false
-    - service: media_player.play_media
+    - action: media_player.play_media
       target:
         entity_id: media_player.plex_smart_tv
       data:
         media_content_id: "{"library_name": "Movies", "title": "Zoolander"}"
         media_content_type: movie
 ```
-
-{% endraw %}
 
 ## Update
 
@@ -152,9 +147,9 @@ The Plex media player platform will create media player entities for each connec
 
 By default, the Plex integration will create media player entities for all local, managed, and shared users on the Plex server. To customize which users or client types to monitor, adjust the "*Monitored users*", "*Ignore new managed/shared users*", and "*Ignore Plex Web clients*" options described under [Integration Options](#integration-options).
 
-### Service `media_player.play_media`
+### Action: Play media
 
-Play media hosted on a Plex server on a Plex client or other supported device.
+The `media_player.play_media` action plays media hosted on a Plex server on a Plex client or other supported device.
 
 Required fields within the `media_content_id` payloads are marked as such, others are optional. There are special parameters that can be added to any query:
 
@@ -162,27 +157,25 @@ Required fields within the `media_content_id` payloads are marked as such, other
 - `resume`: Resumes playback at the last partially watched position if available, otherwise plays at the beginning.
 - `offset`: The desired playback start position in seconds.
 - `allow_multiple`: A search must find one specific item to succeed. This parameter accepts multiple matches in a search and enqueues all found items for playback. Accepts `1` or `true` to enable.
+- `username`: A username for a local Plex user account. This is only required if the Plex server has multiple users and you wish to play media for a specific user.
+- `continuous`: Plex will automatically play the next episode in the series. Accepts `1` or `true` to enable.
 
 Simplified examples are provided for [music](#music), [TV episodes](#tv-episode), and [movies](#movie). See [advanced searches](#advanced-searches) for complex/smart search capabilities.
 
-<div class='note info'>
-  
+{% note %}
 Refer to these links if casting to non-Plex players:
 
 - [Chromecast](/integrations/cast/#plex)
 - [Sonos](/integrations/plex#sonos-playback)
-  
-</div>
+{% endnote %}
 
-<div class='note warning'>
-
+{% important %}
 The integration must be configured with a token for playback commands to work. This can occur if using the `List of IP addresses and networks that are allowed without auth` option on the Plex server. If that feature is required, it's recommended to configure the integration with that feature temporarily disabled.
-
-</div>
+{% endimportant %}
 
 #### Music
 
-| Service data attribute | Description                                                                                                                                                                                                                                                                                      |
+| Data attribute | Description                                                                                                                                                                                                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `entity_id`            | `entity_id` of the client                                                                                                                                                                                                                                                                        |
 | `media_content_id`     | Quoted JSON containing:<br/><ul><li>`library_name` (Required)</li><li>`artist_name` or `artist.title`</li><li>`album_name` or `album.title`</li><li>`track_name` or `track.title`</li><li>`track_number` or `track.index`</li><li>`shuffle` (0 or 1)</li><li>`allow_multiple` (0 or 1)</li></ul> |
@@ -208,7 +201,7 @@ media_content_id: '{ "library_name": "Music", "artist_name": "Stevie Wonder", "s
 
 #### Playlist
 
-| Service data attribute | Description                                                                                         |
+| Data attribute | Description                                                                                         |
 | ---------------------- | --------------------------------------------------------------------------------------------------- |
 | `entity_id`            | `entity_id` of the client                                                                           |
 | `media_content_id`     | Quoted JSON containing:<br/><ul><li>`playlist_name` (Required)</li><li>`shuffle` (0 or 1)</li></ul> |
@@ -226,11 +219,11 @@ media_content_id: '{ "playlist_name": "The Best of Disco", "shuffle": "1" }'
 
 #### TV episode
 
-| Service data attribute | Description                                                                                                                                                                                                                                                                                                            |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`            | `entity_id` of the client                                                                                                                                                                                                                                                                                              |
-| `media_content_id`     | Quoted JSON containing:<br/><ul><li>`library_name` (Required)</li><li>`show_name` or `show.title`</li><li>`season_number` or `season.index`</li><li>`episode_number` or `episode.index`</li><li>`shuffle` (0 or 1)</li><li>`resume` (0 or 1)</li><li>`offset` (in seconds)</li><li>`allow_multiple` (0 or 1)</li></ul> |
-| `media_content_type`   | `EPISODE`                                                                                                                                                                                                                                                                                                              |
+| Data attribute | Description                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`            | `entity_id` of the client                                                                                                                                                                                                                                                                                                                            |
+| `media_content_id`     | Quoted JSON containing:<br/><ul><li>`library_name` (Required)</li><li>`show_name` or `show.title`</li><li>`season_number` or `season.index`</li><li>`episode_number` or `episode.index`</li><li>`shuffle` (0 or 1)</li><li>`resume` (0 or 1)</li><li>`offset` (in seconds)</li><li>`allow_multiple` (0 or 1)</li><li>`continuous` (0 or 1)</li></ul> |
+| `media_content_type`   | `EPISODE`                                                                                                                                                                                                                                                                                                                                            |
 
 ##### Examples:
 
@@ -258,9 +251,16 @@ media_content_type: EPISODE
 media_content_id: '{ "library_name": "News TV", "show_name": "60 Minutes", "episode.unwatched": true, "episode.inProgress": [true, false], "resume": 1, "sort": "addedAt:asc", "maxresults": 1 }'
 ```
 
+Play Rick and Morty episodes continuously starting from S2E5
+
+```yaml
+entity_id: media_player.plex_player
+media_content_type: EPISODE
+media_content_id: '{ "library_name": "Adult TV", "show_name": "Rick and Morty", "season_number": 2, "episode_number": 5, "continuous": 1}'
+```
 #### Movie
 
-| Service data attribute | Description                                                                                                                                     |
+| Data attribute | Description                                                                                                                                     |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `entity_id`            | `entity_id` of the client                                                                                                                       |
 | `media_content_id`     | Quoted JSON containing:<br/><ul><li>`library_name` (Required)</li><li>`title`</li><li>`resume` (0 or 1)</li><li>`offset` (in seconds)</li></ul> |
@@ -352,7 +352,7 @@ To play Plex music directly to Sonos speakers, the following requirements must b
 2. Sonos speakers linked to your Plex account [(Instructions)](https://support.plex.tv/articles/control-sonos-playback-with-a-plex-app/).
 3. [Sonos](/integrations/sonos/) integration configured.
 
-Call the `media_player.play_media` service with the `entity_id` of a Sonos integration device and `media_content_type` prepended with `plex://`. Both [music](#music) and [playlist](#playlist) `media_content_type` values are supported.
+Call the `media_player.play_media` action with the `entity_id` of a Sonos integration device and `media_content_type` prepended with `plex://`. Both [music](#music) and [playlist](#playlist) `media_content_type` values are supported.
 
 ### Examples:
 
@@ -372,13 +372,13 @@ media_content_type: playlist
 media_content_id: 'plex://{ "playlist_name": "Party Mix" }'
 ```
 
-## Additional services
+## Additional actions
 
-### Service `plex.refresh_library`
+### Action: Refresh library
 
-Refresh a Plex library to scan for new and updated media.
+The `plex.refresh_library` action refreshes a Plex library to scan for new and updated media.
 
-| Service data attribute | Required | Description                                                | Example          |
+| Data attribute | Required | Description                                                | Example          |
 | ---------------------- | -------- | ---------------------------------------------------------- | ---------------- |
 | `server_name`          | No       | Name of Plex server to use if multiple servers configured. | "My Plex Server" |
 | `library_name`         | Yes      | Name of Plex library to update.                            | "TV Shows"       |
@@ -386,5 +386,5 @@ Refresh a Plex library to scan for new and updated media.
 
 ## Notes
 
-- The Plex integration supports multiple Plex servers. Additional connections can be configured under **Settings** -> **Devices & Services**.
+- The Plex integration supports multiple Plex servers. Additional connections can be configured under {% my integrations title="**Settings** > **Devices & services**" %}.
 - Movies must be located under the 'Movies' section in a Plex library to properly view the 'playing' state.

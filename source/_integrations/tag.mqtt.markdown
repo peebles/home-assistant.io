@@ -8,7 +8,7 @@ ha_iot_class: Configurable
 ha_domain: mqtt
 ---
 
-The `mqtt` tag scanner platform uses an MQTT message payload to generate tag scanned events.
+The **MQTT tag scanner** {% term integration %} uses an MQTT message payload to generate tag scanned events.
 
 ## Configuration
 
@@ -21,7 +21,7 @@ topic:
   required: true
   type: string
 value_template:
-  description: "Defines a [template](/docs/configuration/templating/#using-templates-with-the-mqtt-integration) that returns a tag ID."
+  description: "Defines a [template](/docs/templating/where-to-use/#mqtt) that returns a tag ID."
   required: false
   type: template
 device:
@@ -51,6 +51,10 @@ device:
       type: string
     model:
       description: The model of the device.
+      required: false
+      type: string
+    model_id:
+      description: The model identifier of the device.
       required: false
       type: string
     name:

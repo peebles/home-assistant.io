@@ -1,5 +1,16 @@
 ---
 title: "World's most private voice assistant"
+related:
+  - docs: /voice_control/voice_remote_cloud_assistant/
+    title: Creating a Cloud assistant
+  - docs: /voice_control/voice_remote_local_assistant/
+    title: Creating a local assistant
+  - docs: /voice_control/assist_create_open_ai_personality/
+    title: Creating an assistant personality with AI
+  - url: https://www.amazon.com/dp/B06XW1BQHC
+    title: Grandstream HT801
+  - url: https://www.nabucasa.com
+    title: Home Assistant Cloud
 ---
 
 This tutorial will guide you to turn your old landline phone into the
@@ -10,10 +21,10 @@ your smart home and issue commands and get responses.
 
 ## Required material
 
-- Home Assistant 2023.5 or later
+- Home Assistant 2023.5 or later, installed with the Home Assistant Operating System. If you do not have Home Assistant installed yet, refer to the [installation page](/installation/) for instructions.
 - An [analog phone](#about-the-analog-phone) with an RJ11 socket
 - An analog telephone adapter
-  [Grandstream HT801](https://amzn.to/40k7mRa)
+  [Grandstream HT801](https://www.amazon.com/dp/B06XW1BQHC)
   - includes a 5&nbsp;V power adapter and an Ethernet cable
 - RJ11 phone cable to connect the phone to the Grandstream
 - [Cloud assistant pipeline](/voice_control/voice_remote_cloud_assistant/) or a manually configured [local assistant pipeline](/voice_control/voice_remote_local_assistant/)
@@ -47,7 +58,7 @@ your smart home and issue commands and get responses.
 
 ## Setting up the phone in Home Assistant
 
-1. In Home Assistant, go to {% my config_flow_start domain="voip" title="**Settings** > **Devices & Services** > **Add integration**" %} and add the **Voice over IP** integration.
+1. In Home Assistant, go to {% my config_flow_start domain="voip" title="**Settings** > **Devices & services** > **Add integration**" %} and add the **Voice over IP** integration.
     ![Voice over IP integration](/images/assist/voip_install.png)
 2. Once you see the integration, pick up the phone.
    - You should now hear the message *This is your smart home speaking. Your phone is connected, but you must configure it within Home Assistant.*
@@ -100,7 +111,7 @@ If you’re unable to call Home Assistant, confirm the following settings in you
 ### The Voice over IP integration no longer works
 
 **Symptom**
-You were able to control Home Assistant over the phone but it no longer works. When picking up the phone, no sound is played. 
+You were able to control Home Assistant over the phone but it no longer works. When picking up the phone, no sound is played.
 The [debug information](/voice_control/troubleshooting#view-debug-information) shows no runs.
 
 **Potential remedy**
@@ -113,7 +124,7 @@ The [debug information](/voice_control/troubleshooting#view-debug-information) s
 
 ## Other troubleshooting steps
 
-Are things still not working as expected? 
+Are things still not working as expected?
 
 - Checkout the [general troubleshooting section for Assist](/voice_control/troubleshooting).
 
@@ -125,10 +136,3 @@ The phone shown in the video by TheFes is a *Heemaf type 1955*, which was used b
 
 The phone used during creation of this tutorial is a 1953 [*Tischstation Mod.29 HF-TR* by Autophon AG](https://www.radiomuseum.org/r/autophon_tischstation_mod29_hf_tr.html).
 ![Analog phone Tischstation Mod.29 by Autophon AG](/images/assist/autophon-mod-29.jpg)
-
-## Related topics
-
-- [Grandstream HT801](https://amzn.to/40k7mRa)
-- [Home Assistant Cloud](https://www.nabucasa.com)
-- [Cloud assistant pipeline](/voice_control/voice_remote_cloud_assistant/)
-- [Local assistant pipeline](/voice_control/voice_remote_local_assistant/)

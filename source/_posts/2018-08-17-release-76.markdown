@@ -11,9 +11,9 @@ categories:
 og_image: /images/blog/2018-08-0.76/components.png
 ---
 
-<div class='note'>
+{% note %}
 This release has a migration, initial startup can take ~20 minutes (depends on size DB)
-</div>
+{% endnote %}
 
 This release includes a database migration to allow us to store context in the database. This will make it possible in the future to introduce attribution. For example, we'll be able to say which user opened the garage door or which automation triggered the party mode at 3am.
 
@@ -80,7 +80,7 @@ mqtt:
 
 ## If you need help...
 
-...don't hesitate to use our very active [forums](https://community.home-assistant.io/) or join us for a little [chat](https://discord.gg/c5DvZ4e). The release notes have comments enabled but it's preferred if you use the former communication channels. Thanks.
+...don't hesitate to use our very active [forums](https://community.home-assistant.io/) or join us for a little [chat](https://discord.gg/home-assistant). The release notes have comments enabled but it's preferred if you use the former communication channels. Thanks.
 
 ## Reporting Issues
 

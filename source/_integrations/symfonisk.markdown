@@ -11,12 +11,14 @@ ha_supporting_domain: sonos
 ha_supporting_integration: Sonos
 ha_codeowners:
   - '@jjlawren'
+  - '@peterager'
 ha_config_flow: true
 ha_platforms:
   - binary_sensor
   - diagnostics
   - media_player
   - number
+  - select
   - sensor
   - switch
 ha_iot_class: Local Push

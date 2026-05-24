@@ -3,16 +3,17 @@ title: VIZIO SmartCast
 description: Instructions on how to integrate VIZIO SmartCast TVs and sound bars into Home Assistant.
 ha_category:
   - Media player
+  - Remote
 ha_release: 0.49
 ha_iot_class: Local Polling
 ha_config_flow: true
-ha_quality_scale: platinum
 ha_codeowners:
   - '@raman325'
 ha_domain: vizio
 ha_zeroconf: true
 ha_platforms:
   - media_player
+  - remote
 ha_integration_type: device
 ---
 
@@ -24,11 +25,9 @@ If `zeroconf` discovery is enabled, your device will get discovered automaticall
 
 ### Install `pyvizio` locally
 
-<div class='note'>
-
+{% note %}
 If the `pip3` command is not found, try `pip` instead
-
-</div>
+{% endnote %}
 
 - To install, run `pip3 install pyvizio` in your terminal.
 - If `pyvizio` is already installed locally, make sure you are using the latest version by running `pip3 install --upgrade pyvizio` in your terminal.
@@ -104,7 +103,7 @@ You will need the authentication token returned by this command to configure Hom
 
 ## Configuration
 
-To add your VIZIO TV to your installation, add the following to your `configuration.yaml` file:
+To add your VIZIO TV to your installation, add the following to your {% term "`configuration.yaml`" %} file:
 
 ```yaml
 # Example configuration.yaml entry
@@ -204,7 +203,7 @@ vizio:
 
 ### Obtaining an app configuration
 
-If there is an app you want to be able to launch from Home Assistant that isn't detected by default, you will need to specify the app configuration in `configuration.yaml`. This configuration can be obtained from the `app_id` state attribute when an unknown app is running on your device.
+If there is an app you want to be able to launch from Home Assistant that isn't detected by default, you will need to specify the app configuration in {% term "`configuration.yaml`" %}. This configuration can be obtained from the `app_id` state attribute when an unknown app is running on your device.
 
 ### Obtaining a list of valid apps to include or exclude
 
@@ -214,16 +213,103 @@ The list of apps that are provided by default is statically defined [here](https
 pyvizio --ip=0 get-apps-list
 ```
 
-## Service `vizio.update_setting`
+## Action `vizio.update_setting`
 
-This service allows you to update a setting on a given VIZIO device. You will need to know the type of setting and the name of the setting to call this service. You can determine this by using the SmartCast app and going to device settings for your target device. The setting type is the lowercase version of the first menu item you'd select (e.g., display, audio, system), and the setting name is what you see in the app, but spaces are replaced with underscores and it is also all lowercase (e.g., AV delay would be called `av_delay`).
+This action allows you to update a setting on a given VIZIO device. You will need to know the type of setting and the name of the setting to perform this action. You can determine this by using the SmartCast app and going to device settings for your target device. The setting type is the lowercase version of the first menu item you'd select (e.g., display, audio, system), and the setting name is what you see in the app, but spaces are replaced with underscores and it is also all lowercase (e.g., AV delay would be called `av_delay`).
 
-| Service data attribute | Optional | Description | Example |
+| Data attribute | Optional | Description | Example |
 | ---------------------- | -------- | ----------- | ------- |
 | `entity_id` | yes | The devices to update a setting for. | `media_player.vizio_smartcast`
 | `setting_type` | no | The type of setting. | `audio`
 | `setting_name` | no | The name of the setting. | `eq`
 | `new_value` | no | The new value to set the setting to. | `Music`
+
+## Remote
+
+The VIZIO SmartCast integration automatically creates a remote entity for each configured device (TVs and speakers). You can use it to send remote control commands via the `remote.send_command` action. Commands are case-insensitive.
+
+### Available commands
+
+#### TV commands
+
+| Command |
+| :------ |
+| `back` |
+| `cc_toggle` |
+| `ch_down` |
+| `ch_prev` |
+| `ch_up` |
+| `down` |
+| `exit` |
+| `home` |
+| `info` |
+| `input_next` |
+| `left` |
+| `left2` |
+| `menu` |
+| `mute_off` |
+| `mute_on` |
+| `mute_toggle` |
+| `ok` |
+| `pause` |
+| `pic_mode` |
+| `pic_size` |
+| `play` |
+| `pow_off` |
+| `pow_on` |
+| `pow_toggle` |
+| `right` |
+| `seek_back` |
+| `seek_fwd` |
+| `smartcast` |
+| `up` |
+| `vol_down` |
+| `vol_up` |
+
+#### Speaker commands
+
+Speakers support a subset of the commands above:
+
+`mute_off`, `mute_on`, `mute_toggle`, `pause`, `play`, `pow_off`, `pow_on`, `pow_toggle`, `vol_down`, `vol_up`
+
+### Examples
+
+Send a single command:
+
+```yaml
+action: remote.send_command
+target:
+  entity_id: remote.vizio_smartcast
+data:
+  command:
+    - enter
+```
+
+Send multiple commands:
+
+```yaml
+action: remote.send_command
+target:
+  entity_id: remote.vizio_smartcast
+data:
+  command:
+    - down
+    - down
+    - enter
+```
+
+Repeat a command with a delay between each repeat:
+
+```yaml
+action: remote.send_command
+target:
+  entity_id: remote.vizio_smartcast
+data:
+  command:
+    - vol_up
+  num_repeats: 5
+  delay_secs: 0.4
+```
 
 ## Notes and limitations
 

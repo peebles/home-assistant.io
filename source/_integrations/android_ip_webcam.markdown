@@ -16,7 +16,7 @@ ha_platforms:
   - camera
   - sensor
   - switch
-ha_integration_type: integration
+ha_integration_type: device
 ha_codeowners:
   - '@engrbm87'
 ---
@@ -38,8 +38,6 @@ Download [Android IP Webcam app](https://play.google.com/store/apps/details?id=c
 
 {% include integrations/config_flow.md %}
 
-<div class='note'>
-
+{% note %}
 You need to enable logging in the Android app (`Data logging` > `Enable data logging`) if you wish to see the sensor states in Home Assistant. The {% term sensor %} {% term states %} stay as `unknown`, until this is enabled.
-
-</div>
+{% endnote %}

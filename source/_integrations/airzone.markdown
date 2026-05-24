@@ -7,6 +7,7 @@ ha_category:
   - Climate
   - Select
   - Sensor
+  - Switch
   - Water heater
 ha_iot_class: Local Polling
 ha_config_flow: true
@@ -17,14 +18,15 @@ ha_platforms:
   - diagnostics
   - select
   - sensor
+  - switch
   - water_heater
 ha_codeowners:
   - '@Noltari'
-ha_integration_type: integration
+ha_integration_type: hub
 ha_dhcp: true
 ---
 
-This integration interacts with the Local API of [Airzone HVAC zoning systems](https://www.airzone.es/en/).
+This {% term integration %} interacts with the Local API of [Airzone HVAC zoning systems](https://www.airzone.es/en/).
 
 A typical Airzone device has a *parent zone* (Master Thermostat) per HVAC system, which is the only zone where the HVAC mode can be changed. The rest are *child zones* which can only enable or disable the HVAC and adjust the desired temperature on that specific zone.
 
@@ -68,6 +70,12 @@ For each Airzone zone (thermostat) a *climate entity* is created.
 
 ## Select
 
+For each Airzone system (HVAC machine), the following *selects* are created:
+
+| Condition           | Description                        |
+| :------------------ | :--------------------------------- |
+| Q-Adapt             | Airflow control algorithm.         |
+
 For each Airzone zone (thermostat), the following *selects* are created:
 
 | Condition           | Description                        |
@@ -92,11 +100,23 @@ For the Airzone WebServer, the following *sensors* are created:
 
 For each Airzone zone (thermostat), the following *sensors* are created:
 
-| Condition           | Description                        |
-| :------------------ | :--------------------------------- |
-| humidity            | Current zone relative humidity.    |
-| temperature         | Current zone temperature.          |
+| Condition           | Description                              |
+| :------------------ | :--------------------------------------- |
+| battery             | Current zone thermostat battery.         |
+| humidity            | Current zone relative humidity.          |
+| temperature         | Current zone temperature.                |
+| signal_strength     | Current zone thermostat signal strength. |
+
+## Switch
+
+For each Airzone zone (thermostat), a *switch entity* is created.
 
 ## Water heater
 
 For each Airzone device a *water heater entity* is created if supported.
+
+## Removing the integration
+
+This integration follows standard integration removal. No extra steps are required.
+
+{% include integrations/remove_device_service.md %}

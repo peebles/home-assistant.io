@@ -5,17 +5,16 @@ ha_category:
   - Energy
 ha_release: '0.108'
 ha_iot_class: Cloud Polling
-ha_quality_scale: platinum
 ha_config_flow: true
 ha_codeowners:
   - '@azogue'
 ha_domain: pvpc_hourly_pricing
 ha_platforms:
   - sensor
-ha_integration_type: integration
+ha_integration_type: service
 ---
 
-This sensor uses the official API to get the hourly price of electricity in Spain from <https://www.esios.ree.es/en/pvpc>.
+This {% term integration %} uses the official API to get the hourly price of electricity in Spain from <https://www.esios.ree.es/en/pvpc>.
 
 Specifically, it shows the current __active energy invoicing price (FEU)__ in €/kWh, which is the energy term hourly price applied in the consumers' electrical bill with a contracted power not exceeding 15 kW and which are under the PVPC (Voluntary Price for Small Consumer).
 
@@ -47,8 +46,7 @@ Then, enable the API Token option for this integration.
 You can set up the integration 2 times; one for each geographic zone. To do this, add them again through the integrations panel under {% my integrations title="**Settings** > **Devices & services**" %}.
 You can change the configuration anytime in the integration options.
 
-<div class='note'>
-
+{% note %}
 The sensor provides an hourly price for energy consumed, but the variable cost of energy is only one of the factors that add up to the electricity bill:
 
 - Fixed cost of contracted power
@@ -56,5 +54,4 @@ The sensor provides an hourly price for energy consumed, but the variable cost o
 - Variable cost of energy consumed (the sensor's value)
 - Other fixed expenses, such as the rental of the electric meter
 - Multiple taxes applied
-
-</div>
+{% endnote %}

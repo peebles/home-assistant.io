@@ -3,7 +3,9 @@ title: "Home Assistant 0.45: Automation editor, Z-Wave panel, OCR"
 description: "AXIS and Keene support, PiFace, Raspihats, and Datadog integration"
 date: 2017-05-20 13:00:00 +0000
 date_formatted: "May 20, 2017"
-author: Paulus Schoutsen & Fabian Affolter
+author:
+  - Paulus Schoutsen
+  - Fabian Affolter
 author_twitter: balloob
 categories:
 - Release-Notes
@@ -36,11 +38,11 @@ On the Z-Wave front a lot has happened. The biggest one is that we have a major 
 </p>
 Thanks to the work by the Python Open Z-Wave team we are now able to install it on demand from PyPi! There is no longer a need to pre-compile it yourself. This should give us the guarantee that we work with the Python Open Z-Wave version that the code expects.
 
-<div class='note warning'>
+{% warning %}
 
 If you have a security key set in your Open Z-Wave `options.xml`, copy `options.xml` to your Home Assistant configuration directory. This is the only place where options will get persisted.
 
-</div>
+{% endwarning %}
 
 Next to that [@armills] has lead the charge and managed to get full test coverage for Z-Wave! Thanks for all the hard work!
 
@@ -435,4 +437,4 @@ Experiencing issues introduced by this release? Please report them in our [issue
 [hassio docs]: /integrations/hassio/
 [media_player.volumio docs]: /integrations/volumio
 [telegram_bot docs]: /integrations/telegram_bot/
-[discord]: https://discord.gg/c5DvZ4e
+[discord]: https://discord.gg/home-assistant
